@@ -1,4 +1,4 @@
-Tiles adapted from the grass and trees of a tileset by Reemac, found at
+Tiles adapted from a tileset by Reemac, found at
 https://opengameart.org/content/lpc-forest-tiles 
 
 The full credits for this tileset are as follows

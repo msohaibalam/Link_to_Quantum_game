@@ -17,10 +17,10 @@ quantum_darts_played = False
 pygame.init()
 
 # setup screen
-L2 = 5
-strip = 3
+L2 = 15
+strip = 1
 L = 2*L2+strip
-cell_size = 48
+cell_size = 24
 size_x = cell_size*L
 size_y = cell_size*L
 size = (size_x,size_y)
@@ -39,14 +39,10 @@ Black = (0,0,0)
 done = False
 clock = pygame.time.Clock()
 
-
-# make sticky figure
-def sticky(x,y):
-    pygame.draw.ellipse(screen,Blue,[x-7.5-cell_size/2,y-7.5-cell_size/2,15,15])
     
-# sticky location
-x_coord = (L2+2)*cell_size
-y_coord = (L2+2)*cell_size
+# player location
+x_coord = (L2+1)*cell_size
+y_coord = (L2+1)*cell_size
 x_change = 0
 y_change = 0
 
@@ -121,9 +117,8 @@ p = calculate_probs()
           
 # initialize world
 world = [["dark" for x in range(L)] for y in range(L)]
-for dx in range(3):
-    for dy in range(3):
-        world[L2+dx][L2+dy] = "grass"
+world[L2][L2] = "grass"
+        
         
 def get_cell ( x_coord, y_coord ) :
     
@@ -145,26 +140,31 @@ while not done:
     for ds in [[0,+1],[0,-1],[+1,0],[-1,0]]:
             xx = x+ds[0]
             yy = y+ds[1]
-            if xx in range(L2,L2+3) and yy in range(L):
+            if yy in [0,L-1] and xx in range(L):
+                world[xx][yy] = "door"*(xx==L2) + "grass"*(xx!=L2)
+            elif xx in [0,L-1] and yy in range(L):
+                world[xx][yy] = "door"*(yy==L2) + "grass"*(yy!=L2)
+            elif xx in range(L2,L2+strip) and yy in range(L):
                 world[xx][yy] = "grass"
-            elif yy in range(L2,L2+3) and xx in range(L):
+            elif yy in range(L2,L2+strip) and xx in range(L):
                 world[xx][yy] = "grass"
             elif xx in range(L) and yy in range(L):
                 if world[xx][yy]=="dark":
                     
-                    if xx<L2:
+                    if xx<(L2+1):
                         qubit = 0
-                        xp = xx
+                        xp = xx-1
                     else:
                         qubit = 1
                         xp = xx-L2-strip
                         
-                    if yy<L2:
+                    if yy<(L2+1):
                         basis = "x"
-                        yp = yy
+                        yp = yy-1
                     else:
                         basis = "z"
                         yp = yy-L2-strip
+                        
                         
                     if pairs[(xp,yp)]==[]: # if no measurements have been made on this pair
                         world[xx][yy] = numpy.random.choice(["trees","grass"]) # choose randomly
@@ -211,13 +211,13 @@ while not done:
             done = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                x_change = -5
+                x_change = -12.5
             if event.key == pygame.K_RIGHT:
-                x_change = 5
+                x_change = 12.5
             if event.key == pygame.K_UP:
-                y_change = -5
+                y_change = -12.5
             if event.key == pygame.K_DOWN:
-                y_change =     5
+                y_change = 12.5
             if event.key == pygame.K_SPACE:
                 fire_x = x_coord
                 fire_y = y_coord
@@ -242,39 +242,43 @@ while not done:
 
     # see if new cell can be entered
     if new_x in range(L) and new_y in range(L):
-        if world[new_x][new_y]=="grass":
+        if world[new_x][new_y] in ["grass","door"]:
             x_coord = new_x_coord
             y_coord = new_y_coord
             
     
     render_buffer.fill((0, 0, 0)) 
     
+    
+    
     for x in range(L):
         for y in range(L):
             render_buffer.blit(pygame.image.load(world[x][y]+'.png'), (cell_size*x,cell_size*y))
     
+    ## draw player
+    render_buffer.blit(pygame.image.load('butterfly.png'), (x_coord-cell_size,y_coord-cell_size))
+    
     screen.blit(pygame.transform.scale(render_buffer, size), (0, 0))
 
-    ## sticky movement
-    sticky(x_coord,y_coord)
+
     
     
     # see which cell the sticky is in
     x, y = get_cell(x_coord,y_coord)
-    
-    if (x==(L2+1) and y==0) and (not qgame_blend_played):
+         
+    if (x==(L2) and y==0) and (not qgame_blend_played):
         # print("top")
         os.system('source ./run_blender.sh')
         qgame_blend_played = True
-    elif (x==0 and y==(L2+1)) and (not meyer_classical_quantum_game_played):
+    elif (x==0 and y==(L2)) and (not meyer_classical_quantum_game_played):
         # print("left")
         os.system('pythonw meyer_classical_quantum_game.py')
         meyer_classical_quantum_game_played = True
-    elif (x==(2*L2+strip-1) and y==(L2+1)) and (not meyer_quantum_quantum_game_played):
+    elif (x==(L-1) and y==(L2)) and (not meyer_quantum_quantum_game_played):
         # print("right")
         os.system('pythonw meyer_quantum_quantum_game.py')
         meyer_quantum_quantum_game_played = True
-    elif (x==(L2+1) and y==(2*L2+strip-1)) and (not quantum_darts_played):
+    elif (x==(L2) and y==(L-1)) and (not quantum_darts_played):
         # print("bottom")
         os.system('pythonw quantum_darts.py')
         quantum_darts_played = True
