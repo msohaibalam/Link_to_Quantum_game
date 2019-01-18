@@ -1,5 +1,5 @@
 # A Link to Quantum
-Welcome to "A Link to Quantum", a collection of mini video-games that run on a quantum computer! Inspired by retro classics such as Zelda and Block-Out, this work is a result of a collaboration between James Wootton (University of Basel) of Quantum Battleships and Quantum Awesomeness fame, Jonathan DuBois (Lawrence Livermore National Laboratory) and M. Sohaib Alam (myself), and that won us a prize at a quantum computing hackathon hosted by Rigetti Computing on 7 April, 2018.
+Welcome to "A Link to Quantum", a collection of mini video-games that run on a quantum computer! Inspired by retro classics such as Zelda and Block-Out, this work is a result of a collaboration between James Wootton (University of Basel) of Quantum Battleships and Quantum Awesomeness fame, Jonathan DuBois (Lawrence Livermore National Laboratory) and M. Sohaib Alam (myself), and that won us a prize at a quantum computing hackathon hosted by Rigetti Computing on 7 April, 2018. A video of us presenting the game at the hackathon can be found [here](https://www.facebook.com/rigetticomputing/videos/2027563477460870/?t=2050).
 
 To play the games, you need to have the following installed (which work best with Python 3):
 - pyquil (http://pyquil.readthedocs.io/en/latest/)
